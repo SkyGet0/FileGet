@@ -1,23 +1,31 @@
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = AppContext.BaseDirectory
+});
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddCors();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+app.UseStaticFiles(); // для index.html
+
+app.MapPost("/upload", async (IFormFileCollection files, IConfiguration config) =>
 {
-    app.MapOpenApi();
-}
+    var uploadPath = config["TargetFolder"] ?? Path.Combine(@"C:\FileGet", "Files");
 
-app.UseHttpsRedirection();
+    if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
 
-app.UseAuthorization();
+    foreach (var file in files)
+    {
+        var filePath = Path.Combine(uploadPath, file.Name);
+        using var stream = new FileStream(filePath, FileMode.Create);
+        await file.CopyToAsync(stream);
+    }
 
-app.MapControllers();
+    return Results.Ok(new { message = "Файлы успешно отправлены" });
+}).DisableAntiforgery();
 
-app.Run();
+app.Run();  

@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <title>Печать документов</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f2f5;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        input {
+            margin: 10px 0;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Распечатать документы</h2>
+        <input type="file" id="fileInput" multiple>
+        <br>
+        <button onclick="uploadFiles()">Отправить на печать</button>
+        <p id="status"></p>
+    </div>
+
+    <script>
+        async function uploadFiles() {
+            const input = document.getElementById('fileInput');
+            const status = document.getElementById('status');
+            if (input.files.length === 0) return alert("Выберите файлы");
+
+            const formData = new FormData();
+            for (const file of input.files) { formData.append("files", file); }
+
+            status.innerText = "Отправка...";
+            try {
+                const response = await fetch('/upload', { method: 'POST', body: formData });
+                if (response.ok) {
+                    status.innerText = "Успешно!";
+                    input.value = "";
+                }
+            } catch (e) { status.innerText = "Ошибка при отправке"; }
+        }
+    </script>
+</body>
+</html>

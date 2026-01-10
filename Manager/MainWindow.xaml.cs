@@ -23,11 +23,12 @@ namespace Manager
         private Process _tunnelProc; // a process for handling cloudflare tunnel
 
         // target folder for files. By default it's located in the root of the asp.net project and called ReceivedFiles
-        private string _targetFolder = Path.Combine(@"C:\FileGet", "Files");
+        private string _targetFolder;
 
         public MainWindow()
         {
             InitializeComponent();
+            _targetFolder = Properties.Settings.Default.TargetFolder;
             PathDisplay.Text = _targetFolder;
         }
 
@@ -40,10 +41,7 @@ namespace Manager
             var configNode = System.Text.Json.Nodes.JsonNode.Parse(jsonString);
 
             // Обновляем только нашу секцию
-            configNode["Printing"] = new System.Text.Json.Nodes.JsonObject
-            {
-                ["TargetFolder"] = _targetFolder
-            };
+            configNode["TargetFolder"] = _targetFolder;
 
             File.WriteAllText(configPath, configNode.ToString());
         }
@@ -55,8 +53,19 @@ namespace Manager
             {
                 _targetFolder = dialog.FolderName;
                 PathDisplay.Text = _targetFolder;
+
+                Properties.Settings.Default.TargetFolder = _targetFolder;
+                Properties.Settings.Default.Save();
+
                 UpdateApiConfig();
             }
+        }
+
+        // При закрытии окна (автосохранение)
+        protected override void OnClosed(EventArgs e)
+        {
+            Properties.Settings.Default.Save();
+            base.OnClosed(e);
         }
 
         private void Start_Click(object sender, RoutedEventArgs e)
@@ -75,7 +84,7 @@ namespace Manager
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "cloudflared.exe",
-                    Arguments = "tunnel --url http://localhost:5000",
+                    Arguments = "tunnel --url http://localhost:5233",
                     RedirectStandardError = true, // Cloudflare пишет логи в Error stream
                     UseShellExecute = false,
                     CreateNoWindow = true
