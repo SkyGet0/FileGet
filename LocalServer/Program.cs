@@ -1,8 +1,4 @@
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-{
-    Args = args,
-    ContentRootPath = AppContext.BaseDirectory
-});
+п»їvar builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors();
 
@@ -10,22 +6,22 @@ var app = builder.Build();
 
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
-app.UseStaticFiles(); // для index.html
+// Row matters!
+app.UseDefaultFiles();     // / в†’ /index.html
+app.UseStaticFiles();      // wwwroot files
 
 app.MapPost("/upload", async (IFormFileCollection files, IConfiguration config) =>
 {
-    var uploadPath = config["TargetFolder"] ?? Path.Combine(@"C:\FileGet", "Files");
-
+    var uploadPath = config["TargetFolder"] ?? @"C:\FileGet\Files";
     if (!Directory.Exists(uploadPath)) Directory.CreateDirectory(uploadPath);
 
     foreach (var file in files)
     {
-        var filePath = Path.Combine(uploadPath, file.Name);
+        var filePath = Path.Combine(uploadPath, file.FileName);
         using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream);
     }
-
-    return Results.Ok(new { message = "Файлы успешно отправлены" });
+    return Results.Ok(new { message = "Р¤Р°Р№Р»С‹ СѓСЃРїРµС€РЅРѕ РѕС‚РїСЂР°РІР»РµРЅС‹" });
 }).DisableAntiforgery();
 
-app.Run();  
+app.Run("http://localhost:5233");

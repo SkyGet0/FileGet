@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LocalServer\LocalServer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
@@ -22,5 +26,13 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+
+	<ItemGroup>
+		<!-- Копирует cloudflared.exe из LocalServer в bin Manager -->
+		<Content Include="..\LocalServer\cloudflared.exe">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>cloudflared.exe</Link>
+		</Content>
+	</ItemGroup>
 
 </Project>

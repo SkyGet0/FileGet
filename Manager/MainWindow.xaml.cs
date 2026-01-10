@@ -73,7 +73,9 @@ namespace Manager
             // 1. Запускаем API (предположим, что exe лежит в той же папке)
             _apiProc = Process.Start(new ProcessStartInfo
             {
-                FileName = "LocalServer.exe",
+                FileName = "dotnet",
+                Arguments = "run --project \"..\\LocalServer\\LocalServer.csproj\" --no-launch-profile",
+                WorkingDirectory = Path.GetFullPath(".."),
                 CreateNoWindow = true,
                 UseShellExecute = false
             });
@@ -83,7 +85,7 @@ namespace Manager
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "cloudflared.exe",
+                    FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cloudflared.exe"),
                     Arguments = "tunnel --url http://localhost:5233",
                     RedirectStandardError = true, // Cloudflare пишет логи в Error stream
                     UseShellExecute = false,
