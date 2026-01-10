@@ -362,7 +362,7 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Добавленные исключения
+# Added: Files to exclude from push 
 
 **/bin/ 
 **/obj/ 
