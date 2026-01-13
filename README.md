@@ -257,16 +257,4 @@ dotnet run
 - **Models** — структуры данных
 - **Services** — бизнес-логика
 
-## Вклад в проект
-
-Для добавления функций или исправления ошибок:
-
-1. Fork репозитория
-2. Создайте branch (`git checkout -b feature/new-feature`)
-3. Commit изменений (`git commit -m 'Add new feature'`)
-4. Push в branch (`git push origin feature/new-feature`)
-5. Откройте Pull Request
-
 ---
-
-**FileGet v0.1.0** | Автор: [Ваше имя] | Обновлено: 13 января 2026
